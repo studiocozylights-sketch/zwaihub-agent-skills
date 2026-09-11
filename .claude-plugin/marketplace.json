@@ -1,0 +1,22 @@
+{
+  "name": "zwaihub-agent-skills",
+  "owner": {
+    "name": "ZWAiHub"
+  },
+  "metadata": {
+    "description": "Free production-minded agent skills from ZWAiHub. Give away the skill; sell the deployment.",
+    "version": "1.0.0"
+  },
+  "plugins": [
+    {
+      "name": "zwaihub-free-skills",
+      "description": "Git commit/PR writer and Dockerfile & CI hardener — free, MIT, no network calls.",
+      "source": "./",
+      "strict": false,
+      "skills": [
+        "./git-commit-pr-writer",
+        "./dockerfile-ci-hardener"
+      ]
+    }
+  ]
+}
