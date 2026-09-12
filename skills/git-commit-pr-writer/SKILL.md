@@ -10,8 +10,8 @@ description: >
 license: MIT
 metadata:
   author: ZWAiHub
-  version: "1.0.0"
-  network: none
+  version: "1.0.1"
+  network: local-git-optional-remote
   provenance: open-source
 ---
 
@@ -36,7 +36,10 @@ working tree. Prefer matching the repository's existing style when one is clear.
 
 ## Provenance
 
-- **Network:** none. This skill does not call external APIs.
+- **Network:** local-first. Reading `git status` / `diff` / `log` and writing
+  commit/PR *text* need no network. Optional `git push` / `gh pr create` talk to
+  the remote **only** when the user explicitly asks — that is network use, not
+  "none". Do not claim offline purity if you open a PR.
 - **License:** MIT (open source). Version pinned in frontmatter metadata.
 - **Tools expected:** `git` CLI. Optional: `gh` for creating PRs when the user
   explicitly asks. Do not push unless the user explicitly requests it.
@@ -208,4 +211,4 @@ not only filenames.
 
 ---
 Built by ZWAiHub — we deploy this stuff in production for a living.
-More kits: https://whop.com/zwaihub · Source: github.com/studiocozylights-sketch/zwaihub-agent-skills
+Kits: Whop storefront when live · Source: github.com/studiocozylights-sketch/zwaihub-agent-skills

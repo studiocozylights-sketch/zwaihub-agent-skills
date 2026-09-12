@@ -1,6 +1,6 @@
 {
   "name": "zwaihub-free-skills",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Free production-minded agent skills from ZWAiHub: conventional git commit/PR writer and Dockerfile & CI pipeline hardener. MIT, no network calls.",
   "author": {
     "name": "ZWAiHub",
@@ -9,5 +9,14 @@
   "homepage": "https://github.com/studiocozylights-sketch/zwaihub-agent-skills",
   "repository": "https://github.com/studiocozylights-sketch/zwaihub-agent-skills",
   "license": "MIT",
-  "keywords": ["git", "commit", "pull-request", "dockerfile", "ci", "github-actions", "security", "hardening"]
+  "keywords": [
+    "git",
+    "commit",
+    "pull-request",
+    "dockerfile",
+    "ci",
+    "github-actions",
+    "security",
+    "hardening"
+  ]
 }

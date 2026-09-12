@@ -9,8 +9,8 @@ description: >-
 license: MIT
 metadata:
   author: ZWAiHub
-  version: "1.0.0"
-  network: none
+  version: "1.0.1"
+  network: none-by-default
   provenance: open-source
 ---
 
@@ -34,7 +34,9 @@ without explicit human review.
 
 ## Provenance and limits
 
-- **Network:** none by default. Do not fetch images, pull actions, or call APIs.
+- **Network:** none by default for the audit itself (read local Dockerfiles /
+  workflows only). Do not fetch images, pull actions, or call APIs unless the
+  user explicitly asks you to verify a digest/tag online.
 - **Inputs:** local files only (`Dockerfile*`, `.dockerignore`, `.github/workflows/*`,
   `.gitlab-ci.yml`, similar CI configs the user points at).
 - **Outputs:** audit findings + proposed patches. Do not auto-apply; do not
@@ -107,31 +109,38 @@ Work through `references/dockerfile-checklist.md`. Priorities:
 
 ### Example patterns (illustrative)
 
-Non-root + multi-stage (Node-style sketch):
+These are **patterns**, not a drop-in app. They will not build as-is without your
+own `package.json`, lockfile, and `dist/` output. Adapt them; do not paste blind.
+
+Non-root + multi-stage (Node-style sketch). Distroless Node images already set
+`ENTRYPOINT` to `node` and run as UID 65532 on the `:nonroot` tag — do not invent
+a `USER nonroot` name unless that user exists in the image. Install **build**
+deps in the builder stage; copy only runtime artifacts into the final stage.
 
 ```dockerfile
 # syntax=docker/dockerfile:1
 FROM node:22-bookworm-slim AS build
 WORKDIR /app
 COPY package.json package-lock.json ./
-RUN npm ci --omit=dev
+RUN npm ci
 COPY . .
-RUN npm run build
+RUN npm run build && npm prune --omit=dev
 
 FROM gcr.io/distroless/nodejs22-debian12:nonroot
 WORKDIR /app
 COPY --from=build /app/dist ./dist
 COPY --from=build /app/node_modules ./node_modules
-USER nonroot
 EXPOSE 3000
+# ENTRYPOINT is already node; CMD is the script path
 CMD ["dist/server.js"]
 ```
 
-Apt clean in one layer:
+Apt clean in one layer (pin a real package version from `apt-cache policy`, not a
+glob like `curl=8.*` — apt does not accept that form):
 
 ```dockerfile
 RUN apt-get update \
- && apt-get install -y --no-install-recommends curl=8.* \
+ && apt-get install -y --no-install-recommends curl \
  && rm -rf /var/lib/apt/lists/*
 ```
 
@@ -179,13 +188,16 @@ jobs:
       # id-token: write   # enable only for OIDC deploy jobs
     steps:
       - name: Checkout
-        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8  # v4.1.x — replace with current SHA after local verify
+        # Pin is actions/checkout v4.2.2 (tag peeled to commit). Re-verify before
+        # copying into production workflows — tags move; this comment must match.
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
       - name: Build image
         run: docker build -t app:${{ github.sha }} .
 ```
 
-Replace example SHAs with values verified from the action's release page or git
-history at review time (this skill does not network to fetch them).
+Example SHAs must match a real tag or release commit you verified locally (or via
+`git ls-remote`). This skill does not fetch SHAs for you. Never label a SHA with
+the wrong tag.
 
 ### Other CI systems (brief)
 
@@ -211,4 +223,4 @@ If a check cannot be verified from local files alone, mark it `info` /
 
 ---
 Built by ZWAiHub — we deploy this stuff in production for a living.
-More kits: https://whop.com/zwaihub · Source: github.com/studiocozylights-sketch/zwaihub-agent-skills
+Kits: Whop storefront when live · Source: github.com/studiocozylights-sketch/zwaihub-agent-skills

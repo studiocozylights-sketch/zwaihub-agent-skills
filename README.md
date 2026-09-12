@@ -1,8 +1,8 @@
 # ZWAiHub Agent Skills
 
-Free, open [Agent Skills](https://agentskills.io) from [ZWAiHub](https://whop.com/zwaihub).
+Free, open [Agent Skills](https://agentskills.io) from ZWAiHub.
 
-We deploy this stuff in production for a living. These skills are MIT-licensed, with provenance metadata (`network: none` where applicable), and meant to be installed as-is.
+We deploy this stuff in production for a living. These skills are MIT-licensed, with provenance metadata in frontmatter (network policy is stated per skill — read it; some optional git/`gh` steps need a remote), and meant to be installed as-is.
 
 ## Free skills
 
@@ -33,12 +33,14 @@ clawhub install dockerfile-ci-hardener
 
 - Open source (MIT)
 - Version pinned in each skill's frontmatter `metadata.version`
-- Network calls documented in frontmatter (`network: none` for both free skills)
+- Network policy documented in each skill's frontmatter (local-first; optional remote only when the user asks)
 - No secrets required to use
 
 ## More kits
 
-Paid deployment kits (scripts + worked example repos): [whop.com/zwaihub](https://whop.com/zwaihub)
+Paid deployment kits (scripts + worked example repos) ship on our Whop storefront
+when live. Until then, treat this repo as the free catalog only — do not trust a
+placeholder Whop URL.
 
 ---
 Built by ZWAiHub — Pakistan.

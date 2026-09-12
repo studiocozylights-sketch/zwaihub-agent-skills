@@ -36,5 +36,5 @@ MIT © 2026 ZWAiHub
 
 ## Links
 
-- Kits: https://whop.com/zwaihub
+- Kits: Whop storefront when live
 - Source: github.com/studiocozylights-sketch/zwaihub-agent-skills
