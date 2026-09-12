@@ -14,8 +14,8 @@
       "source": "./",
       "strict": false,
       "skills": [
-        "./git-commit-pr-writer",
-        "./dockerfile-ci-hardener"
+        "./skills/git-commit-pr-writer",
+        "./skills/dockerfile-ci-hardener"
       ]
     }
   ]
