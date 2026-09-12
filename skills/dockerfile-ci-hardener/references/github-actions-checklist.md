@@ -50,6 +50,14 @@ Propose a concrete diff for every `fail`.
 | G-FAIL-02 | Security gates not silently skipped | No unexplained `continue-on-error: true` on scan/sign/lint gates |
 | G-FAIL-03 | Required checks documented | What must pass before merge/deploy is clear from workflow or residual notes |
 
+
+## Expression / script injection
+
+| ID | Check | Pass criteria |
+|----|-------|---------------|
+| G-INJ-01 | Untrusted input not spliced into `run:` | `github.event.*`, `head_ref`, PR title/body, issue body, etc. go through `env:` and `"$VAR"` — never `${{ }}` inside shell text |
+| G-INJ-02 | `github.sha` / trusted context in scripts | Prefer `env:` + quoted expansion even for trusted contexts; document if raw `${{ }}` remains in non-shell fields only |
+
 ## Workflow triggers
 
 | ID | Check | Pass criteria |

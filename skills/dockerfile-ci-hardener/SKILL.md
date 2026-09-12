@@ -9,7 +9,7 @@ description: >-
 license: MIT
 metadata:
   author: ZWAiHub
-  version: "1.0.1"
+  version: "1.0.2"
   network: none-by-default
   provenance: open-source
 ---
@@ -102,8 +102,11 @@ Work through `references/dockerfile-checklist.md`. Priorities:
    invalidate often (deps before app source).
 7. **`.dockerignore`** — exclude `.git`, secrets, local env files, build
    artifacts, `node_modules`, `.env*`, credentials.
-8. **HEALTHCHECK** — add when the process exposes a clear liveness signal and
-   the orchestrator does not already own health checks exclusively.
+8. **HEALTHCHECK** — add only when the image has a usable probe binary and the
+   orchestrator does not already own health checks. Distroless/scratch have no
+   `/bin/sh`, so shell-form `HEALTHCHECK CMD curl …` fails at runtime. Prefer
+   orchestrator probes, or exec-form against a binary that exists in the image.
+   Mark as n/a on distroless when health lives outside the container.
 9. **Package managers** — pin versions where practical; avoid `curl | bash`
    installers without checksum verification.
 
@@ -188,16 +191,18 @@ jobs:
       # id-token: write   # enable only for OIDC deploy jobs
     steps:
       - name: Checkout
-        # Pin is actions/checkout v4.2.2 (tag peeled to commit). Re-verify before
-        # copying into production workflows — tags move; this comment must match.
-        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
+        # Replace <40-char-sha> with a commit you verified (e.g. git ls-remote
+        # for tag v4.2.2). Never invent a SHA or mislabel the tag comment.
+        uses: actions/checkout@<40-char-sha>  # v4.2.2
       - name: Build image
-        run: docker build -t app:${{ github.sha }} .
+        env:
+          IMAGE_TAG: ${{ github.sha }}
+        run: docker build -t "app:${IMAGE_TAG}" .
 ```
 
-Example SHAs must match a real tag or release commit you verified locally (or via
-`git ls-remote`). This skill does not fetch SHAs for you. Never label a SHA with
-the wrong tag.
+Do not paste a concrete SHA into this sketch from memory. Verify the pin, then
+substitute. Never splice untrusted `github.event.*` values into `run:` — put them
+in `env:` and expand as shell variables (see checklist G-INJ-01).
 
 ### Other CI systems (brief)
 

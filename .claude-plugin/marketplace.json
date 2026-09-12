@@ -4,19 +4,15 @@
     "name": "ZWAiHub"
   },
   "metadata": {
-    "description": "Free production-minded agent skills from ZWAiHub. Give away the skill; sell the deployment.",
-    "version": "1.0.1"
+    "description": "Free production-minded agent skills from ZWAiHub: conventional git commit/PR writer and Dockerfile & CI pipeline hardener. MIT. Local-first network policy (optional git/gh remote only when the user asks).",
+    "version": "1.0.2"
   },
   "plugins": [
     {
       "name": "zwaihub-free-skills",
-      "description": "Git commit/PR writer and Dockerfile & CI hardener \u2014 free, MIT, no network calls.",
+      "description": "Free production-minded agent skills from ZWAiHub: conventional git commit/PR writer and Dockerfile & CI pipeline hardener. MIT. Local-first network policy (optional git/gh remote only when the user asks).",
       "source": "./",
-      "strict": false,
-      "skills": [
-        "./skills/git-commit-pr-writer",
-        "./skills/dockerfile-ci-hardener"
-      ]
+      "strict": true
     }
   ]
 }

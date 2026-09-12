@@ -8,8 +8,8 @@
 - **Categories (ClawHub):** `development`
 - **Topics:** `git,conventional-commits,pull-request,commit-message`
 - **Price:** Free
-- **Source:** https://github.com/studiocozylights-sketch/zwaihub-agent-skills/tree/main/git-commit-pr-writer
-- **Network:** none
+- **Source:** https://github.com/studiocozylights-sketch/zwaihub-agent-skills/tree/main/skills/git-commit-pr-writer
+- **Network:** see skill frontmatter (local-first; optional remote only when user asks)
 
 ## 2. Dockerfile & CI Pipeline Hardener
 
@@ -19,8 +19,8 @@
 - **Categories (ClawHub):** `development,security,operations`
 - **Topics:** `dockerfile,github-actions,ci,hardening,security`
 - **Price:** Free
-- **Source:** https://github.com/studiocozylights-sketch/zwaihub-agent-skills/tree/main/dockerfile-ci-hardener
-- **Network:** none
+- **Source:** https://github.com/studiocozylights-sketch/zwaihub-agent-skills/tree/main/skills/dockerfile-ci-hardener
+- **Network:** see skill frontmatter (local-first; optional remote only when user asks)
 
 ## Anthropic Console submit
 

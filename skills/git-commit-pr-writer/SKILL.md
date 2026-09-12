@@ -10,7 +10,7 @@ description: >
 license: MIT
 metadata:
   author: ZWAiHub
-  version: "1.0.1"
+  version: "1.0.2"
   network: local-git-optional-remote
   provenance: open-source
 ---
@@ -63,10 +63,15 @@ Run these in parallel when possible:
 
 ```bash
 git status
-git diff          # unstaged
-git diff --staged # staged
-git log -8 --oneline
+git --no-pager diff --stat
+git --no-pager diff --staged --stat
+git --no-pager log --no-merges -20 --format=%s
 ```
+
+Always use `--no-pager` so a configured `less` cannot hang the agent. Size the
+change with `--stat` first; only then pull hunks with
+`git --no-pager diff -- <paths>` (and `--staged` when needed) for the concerns
+that matter. Skip vendored/lockfile megadiffs unless the user asks for them.
 
 If nothing is staged and the user wants a commit, either stage relevant paths
 (with user intent) or draft from the unstaged diff and state that staging is
@@ -77,7 +82,7 @@ diffs, summarize by concern (API, UI, tests, config) from the paths and hunks.
 
 ### 2. Match repo style
 
-From `git log`:
+From recent **non-merge** subjects (`git --no-pager log --no-merges -20 --format=%s`):
 
 - If recent commits use `type(scope): subject` → use Conventional Commits.
 - If they use a prefix like `[fix]` or `Fix:` → mirror that pattern.
@@ -89,47 +94,17 @@ sheet.
 
 ### 3. Write the commit message
 
-**Subject rules**
-
-- Imperative mood: "Add", "Fix", "Remove" — not "Added" / "Fixes"
-- ~50 characters when practical; hard stop around 72
-- No trailing period
-- Lowercase after the type/scope prefix when using conventional form
-- Scope optional; use when it clarifies (e.g. `auth`, `api`, `docs`)
-
-**Body (optional)**
-
-- Blank line after subject
-- Explain motivation and tradeoffs; wrap ~72 chars
-- Bullet lists for multiple related changes in one commit
-- Footer only for real trailers (`Fixes #123` only if the user supplied the ID)
-
-**Conventional form**
-
-```
-type(scope): subject
-
-Optional body explaining why.
-
-Optional footer
-```
-
-Common types: `feat`, `fix`, `docs`, `style`, `refactor`, `perf`, `test`,
-`build`, `ci`, `chore`, `revert`.
+Follow [references/commit-style.md](references/commit-style.md) for subject
+rules, type table, body/footers, and breaking-change form. One-line summary:
+imperative subject (~50 chars), conventional `type(scope): subject` when the
+repo uses that style, no invented ticket IDs.
 
 ### 4. Split vs single commit
 
-Prefer **one concern per commit**. Split when:
-
-- Unrelated fixes sit beside a feature
-- Mixed formatting-only changes with logic changes
-- Independent modules could revert separately
-
-Keep a single commit when files are one logical change (e.g. feature + its
-tests + minimal docs).
-
-When splitting, propose an ordered list of commits with paths for each; do not
-claim a split was performed until the user agrees and you stage accordingly.
+Prefer **one concern per commit**. Split heuristics and keep-together cases are
+in [references/commit-style.md](references/commit-style.md). When splitting,
+propose an ordered list of commits with paths; do not claim a split was done
+until the user agrees and you stage accordingly.
 
 ### 5. PR title and body
 
@@ -184,7 +159,7 @@ verify.
 Before handing text back:
 
 - [ ] Message matches inspected diff (no phantom files)
-- [ ] Style matches recent `git log` when a pattern exists
+- [ ] Style matches recent non-merge `git log` when a pattern exists
 - [ ] Subject is imperative, concise, no trailing period
 - [ ] Multi-concern work was split or explicitly kept together with rationale
 - [ ] No invented ticket IDs or test results

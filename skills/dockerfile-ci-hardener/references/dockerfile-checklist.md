@@ -53,7 +53,7 @@ diff for every `fail`.
 
 | ID | Check | Pass criteria |
 |----|-------|---------------|
-| D-RUN-01 | `HEALTHCHECK` considered | Present when appropriate; `n/a` if orchestrator-only health is intentional |
+| D-RUN-01 | HEALTHCHECK / orchestrator health | Shell-form only if `/bin/sh` exists; distroless/scratch → orchestrator probes or exec-form binary present in image; else n/a |
 | D-RUN-02 | `EXPOSE` documents ports only | Not a security boundary; ports match what the app listens on |
 | D-RUN-03 | Read-only root feasible | Noted as residual if app requires writes; suggest explicit volumes |
 | D-RUN-04 | Signal / PID 1 behavior | Use a proper init or runtime that handles signals if needed (`tini`, distroless expectations documented) |

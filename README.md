@@ -22,16 +22,18 @@ We deploy this stuff in production for a living. These skills are MIT-licensed, 
 
 ### ClawHub / OpenClaw
 
-```bash
-clawhub install git-commit-pr-writer
-clawhub install dockerfile-ci-hardener
-```
+Not published on ClawHub yet (GitHub account age gate until ~20 Sep 2026).
+When live, install will look like:
 
-(ClawHub publish pending: GitHub account age gate until ~20 Sep 2026.)
+```bash
+# Available after ClawHub publish (~20 Sep 2026) — do not run until then
+# clawhub install git-commit-pr-writer
+# clawhub install dockerfile-ci-hardener
+```
 
 ## Provenance
 
-- Open source (MIT)
+- Open source (MIT) — see root `LICENSE`
 - Version pinned in each skill's frontmatter `metadata.version`
 - Network policy documented in each skill's frontmatter (local-first; optional remote only when the user asks)
 - No secrets required to use

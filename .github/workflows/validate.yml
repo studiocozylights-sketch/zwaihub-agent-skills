@@ -1,0 +1,50 @@
+name: validate
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - name: Validate manifests and skills
+        run: |
+          set -euo pipefail
+          test -f LICENSE
+          test -f VERSION
+          python3 <<'PY'
+          import json, pathlib, re, sys
+          ver = pathlib.Path("VERSION").read_text().strip()
+          mp = json.loads(pathlib.Path(".claude-plugin/marketplace.json").read_text())
+          pj = json.loads(pathlib.Path(".claude-plugin/plugin.json").read_text())
+          assert pj["name"] == "zwaihub-free-skills"
+          assert pj["version"] == ver, (pj["version"], ver)
+          assert mp["metadata"]["version"] == ver
+          assert pj["description"] == mp["plugins"][0]["description"]
+          assert "skills" not in mp["plugins"][0]
+          skills = sorted(pathlib.Path("skills").glob("*/SKILL.md"))
+          assert skills, "no skills"
+          for skill in skills:
+              text = skill.read_text()
+              assert text.startswith("---\n"), skill
+              fm = text.split("---\n", 2)[1]
+              assert re.search(r"^name:\s*", fm, re.M), skill
+              assert re.search(r"^description:\s*", fm, re.M), skill
+              m = re.search(r'version:\s*"([^"]+)"', fm)
+              assert m and m.group(1) == ver, (skill, m.group(1) if m else None, ver)
+          for path in ["docs/marketplace-listings.md", "README.md"]:
+              body = pathlib.Path(path).read_text()
+              for bad in (
+                  "tree/main/git-commit-pr-writer",
+                  "tree/main/dockerfile-ci-hardener",
+              ):
+                  if bad in body:
+                      raise SystemExit(f"pre-move path {bad} in {path}")
+          print("ok", ver, "skills", len(skills))
+          PY
