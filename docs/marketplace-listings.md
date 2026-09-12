@@ -9,7 +9,7 @@
 - **Topics:** `git,conventional-commits,pull-request,commit-message`
 - **Price:** Free
 - **Source:** https://github.com/studiocozylights-sketch/zwaihub-agent-skills/tree/main/skills/git-commit-pr-writer
-- **Network:** see skill frontmatter (local-first; optional remote only when user asks)
+- **Network:** `optional`
 
 ## 2. Dockerfile & CI Pipeline Hardener
 
@@ -20,7 +20,7 @@
 - **Topics:** `dockerfile,github-actions,ci,hardening,security`
 - **Price:** Free
 - **Source:** https://github.com/studiocozylights-sketch/zwaihub-agent-skills/tree/main/skills/dockerfile-ci-hardener
-- **Network:** see skill frontmatter (local-first; optional remote only when user asks)
+- **Network:** `optional`
 
 ## Anthropic Console submit
 

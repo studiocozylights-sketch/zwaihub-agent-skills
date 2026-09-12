@@ -20,31 +20,62 @@ jobs:
           test -f VERSION
           python3 <<'PY'
           import json, pathlib, re, sys
-          ver = pathlib.Path("VERSION").read_text().strip()
+
+          def fail(msg: str) -> None:
+              raise SystemExit(msg)
+
+          ver = pathlib.Path("VERSION").read_text().strip().splitlines()[0].strip()
+          if not re.fullmatch(r"\d+\.\d+\.\d+", ver):
+              fail(f"bad VERSION: {ver!r}")
+
           mp = json.loads(pathlib.Path(".claude-plugin/marketplace.json").read_text())
           pj = json.loads(pathlib.Path(".claude-plugin/plugin.json").read_text())
-          assert pj["name"] == "zwaihub-free-skills"
-          assert pj["version"] == ver, (pj["version"], ver)
-          assert mp["metadata"]["version"] == ver
-          assert pj["description"] == mp["plugins"][0]["description"]
-          assert "skills" not in mp["plugins"][0]
+          if pj.get("name") != "zwaihub-free-skills":
+              fail("plugin.json name mismatch")
+          if pj.get("version") != ver:
+              fail(f"plugin.json version {pj.get('version')!r} != VERSION {ver!r}")
+          if mp.get("metadata", {}).get("version") != ver:
+              fail("marketplace metadata.version mismatch")
+          if "skills" in mp["plugins"][0]:
+              fail("marketplace plugins[0].skills should be omitted (auto-discover)")
+          if mp["metadata"].get("description") == mp["plugins"][0].get("description"):
+              fail("catalog metadata.description must differ from plugin description")
+
+          allowed_network = {"none", "optional", "required"}
           skills = sorted(pathlib.Path("skills").glob("*/SKILL.md"))
-          assert skills, "no skills"
+          if not skills:
+              fail("no skills")
           for skill in skills:
               text = skill.read_text()
-              assert text.startswith("---\n"), skill
+              if not text.startswith("---\n"):
+                  fail(f"{skill}: missing frontmatter")
               fm = text.split("---\n", 2)[1]
-              assert re.search(r"^name:\s*", fm, re.M), skill
-              assert re.search(r"^description:\s*", fm, re.M), skill
+              if not re.search(r"^name:\s*", fm, re.M):
+                  fail(f"{skill}: missing name")
+              if not re.search(r"^description:\s*", fm, re.M):
+                  fail(f"{skill}: missing description")
               m = re.search(r'version:\s*"([^"]+)"', fm)
-              assert m and m.group(1) == ver, (skill, m.group(1) if m else None, ver)
-          for path in ["docs/marketplace-listings.md", "README.md"]:
-              body = pathlib.Path(path).read_text()
-              for bad in (
-                  "tree/main/git-commit-pr-writer",
-                  "tree/main/dockerfile-ci-hardener",
-              ):
-                  if bad in body:
-                      raise SystemExit(f"pre-move path {bad} in {path}")
-          print("ok", ver, "skills", len(skills))
+              if not m or m.group(1) != ver:
+                  fail(f"{skill}: version {m.group(1) if m else None!r} != {ver!r} (lockstep with plugin VERSION)")
+              n = re.search(r"^  network:\s*(\S+)\s*$", fm, re.M)
+              if not n or n.group(1) not in allowed_network:
+                  fail(f"{skill}: network must be one of {sorted(allowed_network)}")
+
+          # Generic markdown link check for github tree paths under this repo
+          repo_prefix = "github.com/studiocozylights-sketch/zwaihub-agent-skills/tree/"
+          md_files = list(pathlib.Path(".").rglob("*.md"))
+          for path in md_files:
+              if ".git" in path.parts:
+                  continue
+              body = path.read_text(encoding="utf-8", errors="replace")
+              for m in re.finditer(re.escape(repo_prefix) + r"(main/[^\s\)\"']+)", body):
+                  rel = m.group(1)  # main/skills/...
+                  # strip branch
+                  if not rel.startswith("main/"):
+                      continue
+                  local = pathlib.Path(rel[len("main/"):])
+                  if not local.exists():
+                      fail(f"dead repo path in {path}: {rel} (missing {local})")
+
+          print("ok", ver, "skills", len(skills), "md", len(md_files))
           PY

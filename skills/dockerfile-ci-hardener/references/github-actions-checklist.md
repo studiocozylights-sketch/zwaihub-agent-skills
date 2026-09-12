@@ -56,7 +56,6 @@ Propose a concrete diff for every `fail`.
 | ID | Check | Pass criteria |
 |----|-------|---------------|
 | G-INJ-01 | Untrusted input not spliced into `run:` | `github.event.*`, `head_ref`, PR title/body, issue body, etc. go through `env:` and `"$VAR"` — never `${{ }}` inside shell text |
-| G-INJ-02 | `github.sha` / trusted context in scripts | Prefer `env:` + quoted expansion even for trusted contexts; document if raw `${{ }}` remains in non-shell fields only |
 
 ## Workflow triggers
 

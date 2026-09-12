@@ -34,15 +34,14 @@ When live, install will look like:
 ## Provenance
 
 - Open source (MIT) — see root `LICENSE`
-- Version pinned in each skill's frontmatter `metadata.version`
-- Network policy documented in each skill's frontmatter (local-first; optional remote only when the user asks)
+- Version: root `VERSION` is the plugin release; skill frontmatter `metadata.version` tracks it (lockstep for this free catalog)
+- Network policy in each skill frontmatter: `none` | `optional` | `required` (machine-readable)
 - No secrets required to use
 
 ## More kits
 
-Paid deployment kits (scripts + worked example repos) ship on our Whop storefront
-when live. Until then, treat this repo as the free catalog only — do not trust a
-placeholder Whop URL.
+Give away the skill; sell the deployment. Paid kits (scripts + worked example
+repos): [whop.com/zwaihub](https://whop.com/zwaihub) (coming soon).
 
 ---
 Built by ZWAiHub — Pakistan.

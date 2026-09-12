@@ -9,8 +9,8 @@ description: >-
 license: MIT
 metadata:
   author: ZWAiHub
-  version: "1.0.2"
-  network: none-by-default
+  version: "1.0.3"
+  network: optional
   provenance: open-source
 ---
 
@@ -115,10 +115,14 @@ Work through `references/dockerfile-checklist.md`. Priorities:
 These are **patterns**, not a drop-in app. They will not build as-is without your
 own `package.json`, lockfile, and `dist/` output. Adapt them; do not paste blind.
 
-Non-root + multi-stage (Node-style sketch). Distroless Node images already set
-`ENTRYPOINT` to `node` and run as UID 65532 on the `:nonroot` tag — do not invent
-a `USER nonroot` name unless that user exists in the image. Install **build**
-deps in the builder stage; copy only runtime artifacts into the final stage.
+Non-root + multi-stage (Node-style sketch). Distroless Node images set
+`ENTRYPOINT` to `node`. The `:nonroot` tag runs as UID 65532, and distroless
+bases also ship a `nonroot` user in `/etc/passwd` — keep an explicit
+`USER nonroot` for defense in depth (D-USER-01): if the image tag is changed to
+`:latest` / `:debug`, the `USER` line still fails closed in review. Install
+**build** deps in the builder stage; copy runtime artifacts into the final stage.
+Also copy `package.json` when the app uses `"type": "module"` (Node needs it at
+runtime).
 
 ```dockerfile
 # syntax=docker/dockerfile:1
@@ -131,19 +135,27 @@ RUN npm run build && npm prune --omit=dev
 
 FROM gcr.io/distroless/nodejs22-debian12:nonroot
 WORKDIR /app
+COPY --from=build /app/package.json ./
 COPY --from=build /app/dist ./dist
 COPY --from=build /app/node_modules ./node_modules
+USER nonroot
 EXPOSE 3000
 # ENTRYPOINT is already node; CMD is the script path
 CMD ["dist/server.js"]
 ```
 
-Apt clean in one layer (pin a real package version from `apt-cache policy`, not a
-glob like `curl=8.*` — apt does not accept that form):
+Apt clean in one layer. Trailing `*` is valid apt version syntax (prefix match),
+but a pin like `curl=8.*` is brittle: when Debian drops that series from the
+index the build fails with `E: Version '8.*' for 'curl' was not found`. For real
+reproducibility use a `snapshot.debian.org` source; otherwise pin a concrete
+version from `apt-cache policy` and note residual risk (D-SUP-02), or omit the
+pin and document the residual explicitly.
 
 ```dockerfile
+# Example: concrete version from apt-cache policy (still not fully reproducible
+# without a Debian snapshot source — residual: D-SUP-02)
 RUN apt-get update \
- && apt-get install -y --no-install-recommends curl \
+ && apt-get install -y --no-install-recommends curl=8.14.1-2 \
  && rm -rf /var/lib/apt/lists/*
 ```
 
@@ -202,7 +214,9 @@ jobs:
 
 Do not paste a concrete SHA into this sketch from memory. Verify the pin, then
 substitute. Never splice untrusted `github.event.*` values into `run:` — put them
-in `env:` and expand as shell variables (see checklist G-INJ-01).
+in `env:` and expand as shell variables (see checklist G-INJ-01). Trusted
+contexts like `github.sha` may use `env:` + `"$VAR"` in shell steps; raw `${{ }}`
+in non-shell YAML fields (`with:`, `if:`, `tags:`) is fine.
 
 ### Other CI systems (brief)
 
@@ -228,4 +242,4 @@ If a check cannot be verified from local files alone, mark it `info` /
 
 ---
 Built by ZWAiHub — we deploy this stuff in production for a living.
-Kits: Whop storefront when live · Source: github.com/studiocozylights-sketch/zwaihub-agent-skills
+Kits: https://whop.com/zwaihub (coming soon) · Source: github.com/studiocozylights-sketch/zwaihub-agent-skills
