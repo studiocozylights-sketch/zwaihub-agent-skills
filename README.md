@@ -16,7 +16,7 @@ We deploy this stuff in production for a living. These skills are MIT-licensed, 
 ### Claude Code marketplace
 
 ```text
-/plugin marketplace add studiocozylights-sketch/zwaihub-agent-skills
+/plugin marketplace add zwaihub/zwaihub-agent-skills
 /plugin install zwaihub-free-skills@zwaihub-agent-skills
 ```
 

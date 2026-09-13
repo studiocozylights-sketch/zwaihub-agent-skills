@@ -62,7 +62,7 @@ jobs:
                   fail(f"{skill}: network must be one of {sorted(allowed_network)}")
 
           # Generic markdown link check for github tree paths under this repo
-          repo_prefix = "github.com/studiocozylights-sketch/zwaihub-agent-skills/tree/"
+          repo_prefix = "github.com/zwaihub/zwaihub-agent-skills/tree/"
           md_files = list(pathlib.Path(".").rglob("*.md"))
           for path in md_files:
               if ".git" in path.parts:
