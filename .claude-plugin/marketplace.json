@@ -5,7 +5,7 @@
   },
   "metadata": {
     "description": "Give away the skill; sell the deployment. Free production-minded agent skills from ZWAiHub.",
-    "version": "1.0.3"
+    "version": "1.0.4"
   },
   "plugins": [
     {

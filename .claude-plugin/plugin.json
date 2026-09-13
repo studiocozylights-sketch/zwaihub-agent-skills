@@ -1,13 +1,13 @@
 {
   "name": "zwaihub-free-skills",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Free production-minded agent skills from ZWAiHub: conventional git commit/PR writer and Dockerfile & CI pipeline hardener. MIT. Network: optional (local-first; git/gh remote only when the user asks).",
   "author": {
     "name": "ZWAiHub",
-    "url": "https://github.com/studiocozylights-sketch/zwaihub-agent-skills"
+    "url": "https://github.com/zwaihub/zwaihub-agent-skills"
   },
-  "homepage": "https://github.com/studiocozylights-sketch/zwaihub-agent-skills",
-  "repository": "https://github.com/studiocozylights-sketch/zwaihub-agent-skills",
+  "homepage": "https://github.com/zwaihub/zwaihub-agent-skills",
+  "repository": "https://github.com/zwaihub/zwaihub-agent-skills",
   "license": "MIT",
   "keywords": [
     "git",

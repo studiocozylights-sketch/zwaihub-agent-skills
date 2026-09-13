@@ -10,7 +10,7 @@ description: >
 license: MIT
 metadata:
   author: ZWAiHub
-  version: "1.0.3"
+  version: "1.0.4"
   network: optional
   provenance: open-source
 ---
@@ -186,4 +186,4 @@ not only filenames.
 
 ---
 Built by ZWAiHub — we deploy this stuff in production for a living.
-Kits: https://whop.com/zwaihub (coming soon) · Source: github.com/studiocozylights-sketch/zwaihub-agent-skills
+Kits: https://whop.com/zwaihub (coming soon) · Source: github.com/zwaihub/zwaihub-agent-skills
